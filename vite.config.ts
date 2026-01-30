@@ -7,14 +7,6 @@ import autoprefixer from 'autoprefixer';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
   return {
-    css: {
-      postcss: {
-        plugins: [
-          tailwindcss(),
-          autoprefixer(),
-        ],
-      },
-    },
     server: {
       port: 3000,
       host: '0.0.0.0',

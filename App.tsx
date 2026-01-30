@@ -41,8 +41,8 @@ const App: React.FC = () => {
       const otherLogs = prev.logs.filter(l => l.date !== newLog.date);
       // Also update current weight in profile if it's today's log
       const isToday = newLog.date === new Date().toISOString().split('T')[0];
-      const updatedProfile = isToday && prev.profile 
-        ? { ...prev.profile, currentWeight: newLog.weight } 
+      const updatedProfile = isToday && prev.profile
+        ? { ...prev.profile, currentWeight: newLog.weight }
         : prev.profile;
 
       return {
@@ -53,10 +53,10 @@ const App: React.FC = () => {
   };
 
   const handleDeleteLog = (date: string) => {
-    const confirmMsg = lang === 'pt' 
-      ? "Tem certeza que deseja remover o registro deste dia?" 
+    const confirmMsg = lang === 'pt'
+      ? "Tem certeza que deseja remover o registro deste dia?"
       : "Are you sure you want to remove this log?";
-      
+
     if (window.confirm(confirmMsg)) {
       setAppState(prev => ({
         ...prev,
@@ -79,7 +79,7 @@ const App: React.FC = () => {
   };
 
   const handleLoadDemo = () => {
-    const confirmMsg = lang === 'pt' 
+    const confirmMsg = lang === 'pt'
       ? "Isso irá substituir seus dados atuais por dados de demonstração. Deseja continuar?"
       : "This will replace your current data with demo data. Continue?";
 
@@ -92,39 +92,25 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 font-sans relative">
       {/* Language Toggle */}
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
-        <button 
-          onClick={() => setLang('pt')} 
-          className={`text-2xl transition-opacity hover:scale-110 ${lang === 'pt' ? 'opacity-100' : 'opacity-40 grayscale'}`}
-          title="Português"
-        >
-          🇧🇷
-        </button>
-        <button 
-          onClick={() => setLang('en')} 
-          className={`text-2xl transition-opacity hover:scale-110 ${lang === 'en' ? 'opacity-100' : 'opacity-40 grayscale'}`}
-          title="English"
-        >
-          🇺🇸
-        </button>
-      </div>
+
 
       {!appState.profile ? (
-        <Onboarding 
-          onComplete={handleProfileComplete} 
-          onImport={handleImport} 
+        <Onboarding
+          onComplete={handleProfileComplete}
+          onImport={handleImport}
           onDemoLoad={handleLoadDemo}
           lang={lang}
         />
       ) : (
-        <Dashboard 
-          data={appState} 
-          onUpdateLog={handleUpdateLog} 
+        <Dashboard
+          data={appState}
+          onUpdateLog={handleUpdateLog}
           onDeleteLog={handleDeleteLog}
           onImport={handleImport}
           onReset={handleReset}
           onDemoLoad={handleLoadDemo}
           lang={lang}
+          setLang={setLang}
         />
       )}
     </div>

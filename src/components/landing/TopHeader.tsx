@@ -1,4 +1,5 @@
 import { useApp } from '@/hooks/useApp';
+import { APP_VERSION } from '../../version';
 
 const menu = [
   { label: 'Início', path: '/' },
@@ -13,7 +14,10 @@ export function TopHeader() {
     <nav className="fixed top-0 w-full border-b border-white/5 bg-slate-950/70 backdrop-blur-md z-50 h-16 flex items-center justify-between px-6">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center font-bold text-slate-950">E</div>
-        <span className="text-xl font-bold tracking-tighter">Emagrac.ia</span>
+        <div className="flex items-baseline gap-2">
+          <span className="text-xl font-bold tracking-tighter">Emagrac.ia</span>
+          <span className="text-xs text-white/40 font-mono">{APP_VERSION}</span>
+        </div>
       </div>
       <div className="flex gap-2 md:gap-4 items-center">
         {menu.map((item) => (

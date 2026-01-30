@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserProfile, Gender, ActivityLevel, AppState, Language } from '../types';
 import { translations } from '../utils/i18n';
-import { Target, Activity, Calendar, User as UserIcon, Upload, PlayCircle, Sparkles } from 'lucide-react';
+import { Target, Activity, User as UserIcon, Upload, PlayCircle, Sparkles, TrendingUp, Calendar, ChevronRight } from 'lucide-react';
 
 interface Props {
   onComplete: (profile: UserProfile) => void;
@@ -14,11 +14,26 @@ const Onboarding: React.FC<Props> = ({ onComplete, onImport, onDemoLoad, lang })
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     gender: Gender.Male,
     activityLevel: ActivityLevel.Sedentary,
-    startDate: new Date().toISOString().split('T')[0]
+    startDate: new Date().toISOString().split('T')[0],
+    advancementType: 'linear'
   });
+
+  const [activeTab, setActiveTab] = useState<'about' | 'goal'>('about');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingPhraseIndex, setLoadingPhraseIndex] = useState(0);
 
   const t = translations[lang].onboarding;
   const tApp = translations[lang];
+
+  useEffect(() => {
+    let interval: number;
+    if (isLoading) {
+      interval = setInterval(() => {
+        setLoadingPhraseIndex((prev) => (prev + 1) % t.loadingPhrases.length);
+      }, 2000);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading, t.loadingPhrases.length]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -32,8 +47,17 @@ const Onboarding: React.FC<Props> = ({ onComplete, onImport, onDemoLoad, lang })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (activeTab === 'about') {
+      setActiveTab('goal');
+      return;
+    }
+
     if (formData.name && formData.age && formData.height && formData.currentWeight && formData.targetWeight && formData.targetDate) {
-      onComplete(formData as UserProfile);
+      setIsLoading(true);
+      // Simulate API call / processing time
+      setTimeout(() => {
+        onComplete(formData as UserProfile);
+      }, 4000); // 4 seconds loading
     }
   };
 
@@ -54,9 +78,24 @@ const Onboarding: React.FC<Props> = ({ onComplete, onImport, onDemoLoad, lang })
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-emerald-500 mx-auto mb-6"></div>
+          <h2 className="text-xl font-semibold text-gray-700 animate-pulse">
+            {t.loadingPhrases[loadingPhraseIndex]}
+          </h2>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center p-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg mt-10">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-lg mt-5">
+
+        {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center justify-center gap-2">
             <Sparkles className="h-8 w-8 text-emerald-500" />
@@ -65,110 +104,115 @@ const Onboarding: React.FC<Props> = ({ onComplete, onImport, onDemoLoad, lang })
           <p className="text-gray-500">{tApp.subtitle}</p>
         </div>
 
+        {/* Tabs */}
+        <div className="flex border-b border-gray-200 mb-6">
+          <button
+            type="button"
+            onClick={() => setActiveTab('about')}
+            className={`flex-1 py-2 px-4 text-center border-b-2 font-medium text-sm transition-colors ${activeTab === 'about'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+          >
+            {t.tabAbout}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('goal')}
+            className={`flex-1 py-2 px-4 text-center border-b-2 font-medium text-sm transition-colors ${activeTab === 'goal'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+          >
+            {t.tabGoal}
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">{t.name}</label>
-              <div className="relative mt-1">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <UserIcon className="h-5 w-5 text-gray-400" />
+
+          {/* Tab Content */}
+          {activeTab === 'about' && (
+            <div className="space-y-4 animate-fadeIn">
+              {/* Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">{t.name}</label>
+                <div className="relative mt-1">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <UserIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name || ''}
+                    className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                    onChange={handleChange}
+                  />
                 </div>
-                <input
-                  type="text"
-                  name="name"
-                  required
-                  className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={handleChange}
-                />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">{t.age}</label>
-                <input
-                  type="number"
-                  name="age"
-                  required
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={handleNumberChange}
-                />
+              {/* Age & Gender */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t.age}</label>
+                  <input
+                    type="number"
+                    name="age"
+                    required
+                    value={formData.age || ''}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                    onChange={handleNumberChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t.gender}</label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                    onChange={handleChange}
+                  >
+                    <option value={Gender.Male}>{t.male}</option>
+                    <option value={Gender.Female}>{t.female}</option>
+                  </select>
+                </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">{t.gender}</label>
-                <select
-                  name="gender"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={handleChange}
-                  value={formData.gender}
-                >
-                  <option value={Gender.Male}>{t.male}</option>
-                  <option value={Gender.Female}>{t.female}</option>
-                </select>
-              </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700">{t.height}</label>
-                <input
-                  type="number"
-                  name="height"
-                  required
-                  placeholder="Ex: 175"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={handleNumberChange}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">{t.bodyFat}</label>
-                <input
-                  type="number"
-                  name="bodyFatPercentage"
-                  placeholder="Ex: 20"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={handleNumberChange}
-                />
-              </div>
-            </div>
-
-            <div className="border-t pt-4">
-              <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center gap-2">
-                <Target className="h-5 w-5 text-emerald-600" />
-                {t.goals}
-              </h3>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                 <div>
+              {/* Height & Weight */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t.height}</label>
+                  <input
+                    type="number"
+                    name="height"
+                    required
+                    value={formData.height || ''}
+                    placeholder="Ex: 175"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                    onChange={handleNumberChange}
+                  />
+                </div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700">{t.currentWeight}</label>
                   <input
                     type="number"
                     step="0.1"
                     name="currentWeight"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                    onChange={handleNumberChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">{t.targetWeight}</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    name="targetWeight"
-                    required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
+                    value={formData.currentWeight || ''}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
                     onChange={handleNumberChange}
                   />
                 </div>
               </div>
 
-              <div className="mb-4">
+              {/* Activity Level */}
+              <div>
                 <label className="block text-sm font-medium text-gray-700">{t.activityLevel}</label>
                 <select
                   name="activityLevel"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
-                  onChange={(e) => setFormData({...formData, activityLevel: Number(e.target.value)})}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                  onChange={(e) => setFormData({ ...formData, activityLevel: Number(e.target.value) })}
                   value={formData.activityLevel}
                 >
                   <option value={ActivityLevel.Sedentary}>{t.sedentary}</option>
@@ -179,52 +223,125 @@ const Onboarding: React.FC<Props> = ({ onComplete, onImport, onDemoLoad, lang })
                 </select>
               </div>
 
-              <div>
-                 <label className="block text-sm font-medium text-gray-700">{t.targetDate}</label>
-                 <input
+              <div className="flex justify-end pt-4">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('goal')}
+                  className="flex items-center gap-2 py-3 px-6 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+                >
+                  Continuar
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'goal' && (
+            <div className="space-y-4 animate-fadeIn">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t.targetWeight}</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="targetWeight"
+                    required
+                    value={formData.targetWeight || ''}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
+                    onChange={handleNumberChange}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">{t.targetDate}</label>
+                  <input
                     type="date"
                     name="targetDate"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-2 border"
+                    value={formData.targetDate || ''}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm p-3 border"
                     onChange={handleChange}
                   />
+                </div>
               </div>
-            </div>
-          </div>
 
-          <button
-            type="submit"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
-          >
-            {t.createPlan}
-          </button>
+              {/* Advancement Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">{t.advancementType}</label>
+                <div className="grid grid-cols-1 gap-3">
+                  <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${formData.advancementType === 'linear' ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-gray-200 hover:border-emerald-200'}`}>
+                    <input
+                      type="radio"
+                      name="advancementType"
+                      value="linear"
+                      checked={formData.advancementType === 'linear'}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                    />
+                    <div className="ml-3">
+                      <span className="block text-sm font-medium text-gray-900">{t.linear}</span>
+                    </div>
+                    <TrendingUp className="ml-auto h-5 w-5 text-gray-400" />
+                  </label>
+
+                  <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${formData.advancementType === 'progressive' ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-gray-200 hover:border-emerald-200'}`}>
+                    <input
+                      type="radio"
+                      name="advancementType"
+                      value="progressive"
+                      checked={formData.advancementType === 'progressive'}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300"
+                    />
+                    <div className="ml-3">
+                      <span className="block text-sm font-medium text-gray-900">{t.progressive}</span>
+                    </div>
+                    <Activity className="ml-auto h-5 w-5 text-gray-400" />
+                  </label>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
+              >
+                {t.createPlan}
+              </button>
+            </div>
+          )}
+
         </form>
 
+        {/* Footer */}
         <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
-           <div className="text-center">
-             <p className="text-xs text-gray-500 mb-2">{t.alreadyUser}</p>
-             <label className="cursor-pointer w-full flex justify-center items-center gap-2 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
-               <Upload className="h-4 w-4" />
-               {t.import}
-               <input 
-                 type="file" 
-                 accept=".json"
-                 className="hidden" 
-                 onChange={handleImportFile}
-               />
-             </label>
-           </div>
+          <div className="text-center">
+            <p className="text-xs text-gray-500 mb-2">{t.alreadyUser}</p>
+            <label className="cursor-pointer w-full flex justify-center items-center gap-2 py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors">
+              <Upload className="h-4 w-4" />
+              {t.import}
+              <input
+                type="file"
+                accept=".json"
+                className="hidden"
+                onChange={handleImportFile}
+              />
+            </label>
+          </div>
 
-           <div className="text-center">
-              <button 
-                type="button"
-                onClick={onDemoLoad}
-                className="w-full flex justify-center items-center gap-2 py-2 px-4 border border-blue-200 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
-              >
-                <PlayCircle className="h-4 w-4" />
-                {t.demo}
-              </button>
-           </div>
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={onDemoLoad}
+              className="w-full flex justify-center items-center gap-2 py-2 px-4 border border-blue-200 rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors"
+            >
+              <PlayCircle className="h-4 w-4" />
+              {t.demo}
+            </button>
+          </div>
+
+          <div className="text-center mt-4">
+            <p className="text-[10px] text-gray-400">Emagrec.ia v1.0.0 (Beta)</p>
+          </div>
+
         </div>
       </div>
     </div>

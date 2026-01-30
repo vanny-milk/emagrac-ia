@@ -12,6 +12,11 @@ export const translations = {
       female: 'Feminino',
       height: 'Altura (cm)',
       bodyFat: '% Gordura (Opcional)',
+      tabAbout: 'Sobre Você',
+      tabGoal: 'Sua Meta',
+      advancementType: 'Avanço do Plano',
+      linear: 'Linear (Constante)',
+      progressive: 'Progressivo (Aumenta gradualmente)',
       goals: 'Metas',
       currentWeight: 'Peso Atual (kg)',
       targetWeight: 'Peso Meta (kg)',
@@ -25,7 +30,12 @@ export const translations = {
       createPlan: 'Criar meu Plano',
       alreadyUser: 'Já usa o Emagrec.ia?',
       import: 'Importar Dados (JSON)',
-      demo: 'Carregar Dados de Exemplo (Demo)'
+      demo: 'Carregar Dados de Exemplo (Demo)',
+      loadingPhrases: [
+        'Estou montando seu plano, aguarde alguns segundos...',
+        'Analisando seu perfil...',
+        'Calculando metas...'
+      ]
     },
     dashboard: {
       loading: 'Carregando...',
@@ -114,6 +124,11 @@ export const translations = {
       female: 'Female',
       height: 'Height (cm)',
       bodyFat: 'Body Fat % (Optional)',
+      tabAbout: 'About You',
+      tabGoal: 'Your Goal',
+      advancementType: 'Plan Advancement',
+      linear: 'Linear (Constant)',
+      progressive: 'Progressive (Increases gradually)',
       goals: 'Goals',
       currentWeight: 'Current Weight (kg)',
       targetWeight: 'Target Weight (kg)',
@@ -127,7 +142,12 @@ export const translations = {
       createPlan: 'Create my Plan',
       alreadyUser: 'Already using Slim.ai?',
       import: 'Import Data (JSON)',
-      demo: 'Load Demo Data'
+      demo: 'Load Demo Data',
+      loadingPhrases: [
+        'Building your plan, please wait...',
+        'Analyzing your profile...',
+        'Calculating goals...'
+      ]
     },
     dashboard: {
       loading: 'Loading...',

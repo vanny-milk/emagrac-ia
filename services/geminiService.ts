@@ -1,3 +1,4 @@
+// TEMPORARILY DISABLED BY USER REQUEST - 2026-01-30
 import { GoogleGenAI } from "@google/genai";
 import { UserProfile, DailyLog, HealthMetrics, Language } from '../types';
 
@@ -43,8 +44,8 @@ export const getHealthAdvice = async (
     return response.text || (lang === 'pt' ? "Não foi possível gerar sugestões no momento." : "Could not generate advice at the moment.");
   } catch (error) {
     console.error("Gemini Error:", error);
-    return lang === 'pt' 
-      ? "Ocorreu um erro ao tentar conectar com a IA. Tente novamente mais tarde." 
+    return lang === 'pt'
+      ? "Ocorreu um erro ao tentar conectar com a IA. Tente novamente mais tarde."
       : "An error occurred while connecting to AI. Please try again later.";
   }
 };
