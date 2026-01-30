@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import ReactDOM from 'react-dom/client'
-import '../index.css' // <--- ESTA LINHA É OBRIGATÓRIA!
+import '@/index.css' // <--- ESTA LINHA É OBRIGATÓRIA!
 
 
 

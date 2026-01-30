@@ -1,21 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Tema escuro com contraste acessível */
+    --background: 220 60% 8%; /* Azul escuro */
+    --foreground: 210 40% 98%; /* Branco */
+    --card-bg: 220 60% 14%; /* Card azul mais claro */
+    --card-border: 220 40% 40%; /* Borda azul clara */
+    --accent-strong: #38bdf8;
+    --button-bg: #38bdf8;
+    --button-bg-hover: #0ea5e9;
+    --button-text: #fff;
+    --text-contrast: #f8fafc;
+    --text-muted: #cbd5e1;
+    --text-strong: #fff;
+  }
+
+  * {
+    @apply border-border;
+  }
+
   body {
-    @apply bg-slate-950 text-slate-50 antialiased;
+    @apply antialiased min-h-screen;
     font-family: 'Inter', system-ui, sans-serif;
+    background: hsl(var(--background));
+    color: var(--text-contrast);
+    background-attachment: fixed;
+    text-align: center;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, span, label, .text-h1, .text-p {
+    text-align: center !important;
+    color: var(--text-strong);
   }
 }
 
-/* Scrollbar personalizada para combinar com o tema */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-slate-900;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-slate-700 rounded-full hover:bg-slate-600;
+@layer components {
+  .text-h1 {
+    @apply text-4xl md:text-6xl lg:text-7xl font-black tracking-tight;
+    color: var(--text-strong);
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .card-dark {
+    background: hsl(var(--card-bg));
+    border: 1.5px solid hsl(var(--card-border));
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 32px 0 rgba(56,189,248,0.10), 0 2px 8px 0 rgba(0,0,0,0.10);
+    padding: 2rem;
+    text-align: center;
+  }
+  .text-accent {
+    color: var(--accent-strong);
+  }
+  .btn-primary, .btn-secondary, button, input[type="button"], input[type="submit"] {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px 0 rgba(56,189,248,0.10);
+    border: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    outline: none;
+    margin: 0.25rem;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .btn-primary:hover, .btn-secondary:hover, button:hover, input[type="button"]:hover, input[type="submit"]:hover {
+    background: var(--button-bg-hover);
+    color: #fff;
+    box-shadow: 0 4px 16px 0 rgba(56,189,248,0.18);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
 }
