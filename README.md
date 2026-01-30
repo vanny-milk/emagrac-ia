@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# emagrec.ia
 
-# Run and deploy your AI Studio app
+Sua saúde guiada por IA. A maneira mais inteligente de calcular sua taxa metabólica.
 
-This contains everything you need to run your app locally.
+## Principais Funcionalidades
 
-View your app in AI Studio: https://ai.studio/apps/drive/1Izvu6EelK5TehsVEsZmtG7OsjIRh-o2k
+- **Home**: Visão geral das funcionalidades e propósito do aplicativo.
+- **Ficha do Usuário (/calculate)**: Formulário para coleta de dados de saúde do usuário.
+- **Dashboard (/dashboard)**: Visualização do progresso e Taxa Metabólica Basal (TMB).
 
-## Run Locally
+## Estrutura do Código
 
-**Prerequisites:**  Node.js
+- **`src/pages`**: Contém as páginas principais da aplicação:
+  - `Home.tsx`: Página inicial.
+  - `Calculate.tsx`: Página de cálculo e formulário.
+  - `Dashboard.tsx`: Painel de resultados.
+- **`src/components`**: Componentes de UI reutilizáveis.
+- **`services`**: Integrações com backend e IA (e.g., `geminiService.ts`).
 
+## Como Rodar Localmente
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+**Pré-requisitos:** Node.js
+
+1. Instale as dependências:
+   ```bash
+   npm install
+   ```
+
+2. Configure a API Key do Gemini no arquivo `.env.local`:
+   ```bash
+   GEMINI_API_KEY=sua_chave_aqui
+   ```
+
+3. Execute a aplicação:
+   ```bash
+   npm run dev
+   ```
